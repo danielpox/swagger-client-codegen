@@ -1,0 +1,43 @@
+{
+  "name": "swagger-client-codegen",
+  "version": "0.1.0",
+  "description": "Generate a TypeScript API client or GraphQL schema based on a Swagger JSON file",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielpox/swagger-client-codegen.git"
+  },
+  "bugs": {
+    "url": "https://github.com/danielpox/swagger-client-codegen/issues"
+  },
+  "homepage": "https://github.com/danielpox/swagger-client-codegen#readme",
+  "keywords": [
+    "swagger",
+    "api",
+    "client",
+    "codegen",
+    "typescript",
+    "graphql"
+  ],
+  "main": "./lib/swagger-client-codegen.js",
+  "bin": {
+    "swagger-client-codegen": "./bin/index.js"
+  },
+  "scripts": {
+    "start": "npm run generate",
+    "generate": "node ./lib/swagger-client-codegen.js",
+    "compile": "tsc"
+  },
+  "dependencies": {
+    "chalk": "2.4.1",
+    "fs": "0.0.1-security",
+    "yargs": "12.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "10.12.12",
+    "apisauce": "1.0.1",
+    "axios": "0.18.0",
+    "ts-node": "7.0.1",
+    "typescript": "3.2.2"
+  }
+}
