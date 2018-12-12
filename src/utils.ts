@@ -18,19 +18,19 @@ export async function saveFile(data: {}, options: {
   isJSON?: boolean
 }) {
   try {
-    fs.mkdir(path.dirname(options.outputFilePath), { recursive: true }, (err: any) => {
-      if (err) throw new Error(err)
+    if (!fs.existsSync(path.dirname(options.outputFilePath))) {
+      fs.mkdirSync(path.dirname(options.outputFilePath), { recursive: true })
+    }
 
-      fs.writeFile(
-        options.outputFilePath,
-        options.isJSON
-          ? JSON.stringify(data, null, 2)
-          : data,
-        (err: any) => {
-          if (err) throw new Error(err)
-        }
-      )
-    })
+    fs.writeFile(
+      options.outputFilePath,
+      options.isJSON
+        ? JSON.stringify(data, null, 2)
+        : data,
+      (err: any) => {
+        if (err) throw new Error(err)
+      }
+    )
   } catch (thrown) {
     throw new Error(thrown)
   }

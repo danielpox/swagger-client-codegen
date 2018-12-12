@@ -24,6 +24,8 @@ $ npx swagger-client-codegen --typescript --pathToSwaggerJSON 'https://some.url/
 $ yarn swagger-client-codegen --graphql --pathToSwaggerJSON '../some/file/path.json' --outputPath './some/file/path/' --includeJSONOutput
 ```
 
+**NOTE:** Specifying a recursive outputPath (nested non-existing directories) will only work on Node >= v10.12!
+
 You can also use `swagger-client-codegen` directly from your code, if that suits you, as mentioned in the following *JavaScript* and *TypeScript* sections.
 
 ### JavaScript
