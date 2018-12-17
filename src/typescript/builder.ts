@@ -58,9 +58,9 @@ export interface I${type}Endpoints {${ endpoints.map(endpoint => endpoint.action
     return (
   `
   ${ printInterfaceDocumentation(action.description, action.type, endpoint.path) }
-  ${ action.name } (${ retrieveEndpointParams({ pathParams: action.pathParams, queryParams: action.queryParams, bodyParams: action.bodyParams }) }): ${ responseDataType || 'void' }`
+  ${ action.name } (${ retrieveEndpointParams({ pathParams: action.pathParams, queryParams: action.queryParams, bodyParams: action.bodyParams }) }): ${ `${responseDataType} | void` || 'void' }`
     )
-  })).join('\n  ') }
+  }).join('\n  ')).join('\n  ') }
 }
 `.trim()
   )
@@ -196,7 +196,7 @@ class SwaggerAPI implements ISwaggerAPI {
     this.http = create(config)
   }
 
-  public addAuthTokenToHeaders (authToken) {
+  public addAuthTokenToHeaders (authToken: string) {
     this.http.setHeader('Authorization', \`Bearer \${ authToken }\`)
   }
 
