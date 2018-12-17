@@ -53,12 +53,12 @@ export function endpointInterfaceBuilder (endpoints: Endpoint[], type?: string) 
   return (
 `
 export interface I${type}Endpoints {${ endpoints.map(endpoint => endpoint.actions.map(action => {
-    const responseDataType = action.responseDataType && allOrNothing(action.responseDataType.dataType, `Promise<${ action.responseDataType.array ? `${ action.responseDataType.dataType }[]` : action.responseDataType.dataType }>`)
+    const responseDataType = action.responseDataType ? allOrNothing(action.responseDataType.dataType, `Promise<${ action.responseDataType.array ? `${ action.responseDataType.dataType }[]` : action.responseDataType.dataType } | void>`) : 'void'
 
     return (
   `
   ${ printInterfaceDocumentation(action.description, action.type, endpoint.path) }
-  ${ action.name } (${ retrieveEndpointParams({ pathParams: action.pathParams, queryParams: action.queryParams, bodyParams: action.bodyParams }) }): ${ `${responseDataType} | void` || 'void' }`
+  ${ action.name } (${ retrieveEndpointParams({ pathParams: action.pathParams, queryParams: action.queryParams, bodyParams: action.bodyParams }) }): ${ responseDataType }`
     )
   }).join('\n  ')).join('\n  ') }
 }
