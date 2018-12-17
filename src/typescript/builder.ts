@@ -71,8 +71,8 @@ export function endpointBuilder (endpoints: Endpoint[], type?: string) {
 `
 export const ${type}Endpoints: I${type}Endpoints = {
   ${ endpoints.map(endpoint => endpoint.actions.map(action => {
-    const responseDataType =
-      action.responseDataType && allOrNothing(
+    const responseDataType = action.responseDataType &&
+      allOrNothing(
         action.responseDataType.dataType,
         `<${ action.responseDataType.array ? `${ action.responseDataType.dataType }[]` : action.responseDataType.dataType }>`
       )
@@ -81,7 +81,7 @@ export const ${type}Endpoints: I${type}Endpoints = {
   `
   ${ action.name }: async function (${ retrieveEndpointParams({ pathParams: action.pathParams, queryParams: action.queryParams, bodyParams: action.bodyParams, includeType: false }) }) {
     try {
-      const response = await API.http.${ action.type }${ responseDataType }(\`${ endpoint.path.replace(/({\w+})/g, (_, param) => `$${param}`) }\`${allOrNothing(action.queryParams.length, ', queryParams')}${allOrNothing(action.bodyParams.length, ', bodyParams')})
+      const response = await API.http.${ action.type }${ allOrNothing(responseDataType, responseDataType) }(\`${ endpoint.path.replace(/({\w+})/g, (_, param) => `$${param}`) }\`${allOrNothing(action.queryParams.length, ', queryParams')}${allOrNothing(action.bodyParams.length, ', bodyParams')})
 
       if (response.ok) {
         return ${ responseDataType ? 'response.data' : 'response.ok' }

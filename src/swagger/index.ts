@@ -87,7 +87,14 @@ export function parsePaths (paths: SwaggerPath[]): EndpointType[] {
         const isArray = dataType === 'array'
 
         if (responseCode === '200') {
-          actionObj.responseDataType = isArray ? { array: true, dataType: schema && schema.items && (schema.items.type || schema.items.$ref!.match(/([A-Z])\w+/g)![0]) } : { dataType }
+          actionObj.responseDataType = dataType
+            ? (isArray
+              ? {
+                  array: true,
+                  dataType: schema && schema.items && (schema.items.type || schema.items.$ref!.match(/([A-Z])\w+/g)![0])
+                }
+              : { dataType })
+            : undefined
         }
 
         actionObj.responses.push({
