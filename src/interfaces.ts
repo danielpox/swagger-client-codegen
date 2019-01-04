@@ -85,7 +85,7 @@ export interface Field {
   name: string
   type: string
   format?: string
-  enum?: number[]
+  enum?: number[] | string [];
   readOnly?: boolean
   items?: string
   uniqueItems?: boolean
