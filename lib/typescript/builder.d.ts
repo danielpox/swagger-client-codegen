@@ -1,4 +1,4 @@
-import { Type, Endpoint, EndpointType, Field, ClientTag } from '../interfaces';
+import { Type, Endpoint, EndpointType, Field, ClientTag } from "../interfaces";
 export declare const interfaceBuilder: (name: string, fields: Field[], requiredFields?: string[] | undefined) => string;
 export declare function createInterfaces(types: Type[]): Promise<string[]>;
 export declare function endpointInterfaceBuilder(endpoints: Endpoint[], type?: string): string;
