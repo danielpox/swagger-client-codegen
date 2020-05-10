@@ -23,11 +23,11 @@ export function parseTypes (typeEntries: any[]) {
 
       const fieldObj: Field = {
         name: fieldName,
-        type: field.type || field.$ref.match(/([A-Z])\w+/g)[0] || undefined,
+        type: field.type || (field.$ref && field.$ref.match(/([A-Z])\w+/g)[0]) || undefined,
         format: field.format || undefined,
         enum: field.enum || undefined,
         readOnly: field.readOnly || undefined,
-        items: field.items && field.items.$ref && field.items.$ref.match(/([A-Z])\w+/g)[0] || undefined,
+        items: field.items && (field.items.$ref && field.items.$ref.match(/([A-Z])\w+/g)[0]) || undefined,
         uniqueItems: field.uniqueItems || undefined,
       }
 
@@ -52,8 +52,16 @@ export function parsePaths (paths: SwaggerPath[]): EndpointType[] {
       actions: []
     }
 
+    const parameters: any = []
+
     for (let actionName in endpoint) {
       const action = endpoint[actionName]
+
+      if (actionName === 'parameters') {
+        parameters.push(...action as any)
+
+        continue;
+      }
 
       const actionObj: EndpointAction = {
         type: actionName,
@@ -83,7 +91,7 @@ export function parsePaths (paths: SwaggerPath[]): EndpointType[] {
       for (let responseCode in action.responses) {
         const { description, schema } = action.responses[responseCode]
 
-        const dataType = schema && (schema.type || schema.$ref && schema.$ref.match(/([A-Z])\w+/g)![0]) || undefined
+        const dataType = schema && (schema.type || (schema.$ref && schema.$ref.match(/([A-Z])\w+/g)![0])) || undefined
         const isArray = dataType === 'array'
 
         if (responseCode === '200') {
@@ -91,7 +99,7 @@ export function parsePaths (paths: SwaggerPath[]): EndpointType[] {
             ? (isArray
               ? {
                   array: true,
-                  dataType: schema && schema.items && (schema.items.type || schema.items.$ref!.match(/([A-Z])\w+/g)![0])
+                  dataType: schema && schema.items && (schema.items.type || (schema.items.$ref && schema.items.$ref!.match(/([A-Z])\w+/g)![0])) || undefined
                 }
               : { dataType })
             : undefined
@@ -108,6 +116,27 @@ export function parsePaths (paths: SwaggerPath[]): EndpointType[] {
 
       endpointObj.actions.push(actionObj)
     }
+
+    for (let parameterKey in parameters) {
+      const { name, type, in: within, required, description, schema, items } = parameters[parameterKey]
+      const isArray = type === 'array'
+
+      const param: Param = {
+        name,
+        type: isArray ? { type: items && items.type, array: true } : { type: schema ? (schema.$ref && schema.$ref.match(/([A-Z])\w+/g)![0]) : type },
+        required,
+        description
+      }
+
+      for (let endpointKey in endpointObj.actions) {
+        if (!endpointObj.actions[endpointKey][within === 'query' ? 'queryParams' : within === 'body' ? 'bodyParams' : 'pathParams'].find(p => p.name === name))
+          endpointObj.actions[endpointKey][within === 'query' ? 'queryParams' : within === 'body' ? 'bodyParams' : 'pathParams'].push(param)
+      }
+    }
+    
+    if (endpointObj.actions.length === 0) continue;
+
+    endpointObj.actions = [...new Set(endpointObj.actions)]
 
     endpointActions.push(endpointObj)
   }

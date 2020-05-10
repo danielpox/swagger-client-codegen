@@ -13,6 +13,9 @@ import camelCase from "camelcase"
 const isNumber = (type?: string) =>
   type && ["number", "integer"].includes(type) ? "number" : type
 
+const isFile = (type?: string) =>
+  type && type === 'file' ? 'File' : type
+
 const toCamelCase = (text?: string) => camelCase(text || "")
 
 const fieldInterfaceBuilder = (
@@ -23,9 +26,10 @@ const fieldInterfaceBuilder = (
   requiredFields?: string[]
 ) => {
   if (enumerator) {
-    if (type === "string") {
+    if (type === "string" || type === 'array') {
       return `'${enumerator.join("' | '")}'`
     }
+    console.log(type, isArray, enumerator)
     return `${enumerator.join(" | ")}`
   }
   return `${isArray ? items : isNumber(type)}${allOrNothing(isArray, "[]")}`
@@ -35,7 +39,7 @@ export const interfaceBuilder = (
   name: string,
   fields: Field[],
   requiredFields?: string[]
-) => `export interface ${name} {
+) => `export interface ${toCamelCase(name)} {
   ${fields
     .map(({ name: field, type, format, enum: enumerator, readOnly, items }) => {
       const isArray = type === "array"
@@ -88,9 +92,9 @@ function retrieveEndpointParams({
             param =>
               `${param.name}${allOrNothing(
                 includeType,
-                `${allOrNothing(!param.required, "?")}: ${isNumber(
+                `${allOrNothing(!param.required, "?")}: ${isFile(isNumber(
                   param.type!.type
-                )}`
+                ))}`
               )}`
           )
           .join(", ")
@@ -106,9 +110,9 @@ function retrieveEndpointParams({
       queryParams
         .map(
           param =>
-            `${param.name}${allOrNothing(!param.required, "?")}: ${isNumber(
+            `${param.name}${allOrNothing(!param.required, "?")}: ${isFile(isNumber(
               param.type!.type
-            )}${allOrNothing(param.type!.array, "[]")}`
+            ))}${allOrNothing(param.type!.array, "[]")}`
         )
         .join(",\n    ")
     )}
@@ -340,6 +344,8 @@ export async function createClient(
   let clientTags: ClientTag[] = []
 
   for (let endpointType of endpointTypes) {
+    if (!endpointType) continue;
+
     clientTags.push({
       name: camelCase(endpointType.type!),
       interfaces: endpointInterfaceBuilder(
