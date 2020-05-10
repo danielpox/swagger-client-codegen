@@ -29,7 +29,6 @@ const fieldInterfaceBuilder = (
     if (type === "string" || type === 'array') {
       return `'${enumerator.join("' | '")}'`
     }
-    console.log(type, isArray, enumerator)
     return `${enumerator.join(" | ")}`
   }
   return `${isArray ? items : isNumber(type)}${allOrNothing(isArray, "[]")}`
