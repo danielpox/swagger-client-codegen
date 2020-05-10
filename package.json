@@ -1,6 +1,6 @@
 {
   "name": "swagger-client-codegen",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Generate a TypeScript API client or GraphQL schema based on a Swagger JSON file",
   "license": "MIT",
   "repository": {
@@ -27,14 +27,14 @@
   "scripts": {
     "start": "npm run generate",
     "generate": "node lib/swagger-client-codegen.js",
-    "prepublish": "npm run build",
+    "prepare": "npm run build",
     "build": "tsc"
   },
   "dependencies": {
     "axios": "0.18.1",
     "chalk": "2.4.1",
     "fs": "0.0.1-security",
-    "yargs": "12.0.5"
+    "yargs": "^15.3.1"
   },
   "devDependencies": {
     "@types/node": "10.12.12",
